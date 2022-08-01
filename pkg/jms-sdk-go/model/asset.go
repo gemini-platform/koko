@@ -10,6 +10,7 @@ type Asset struct {
 	ID        string   `json:"id"`
 	Hostname  string   `json:"hostname"`
 	IP        string   `json:"ip"`
+	Port      int      `json:"port"`
 	Os        string   `json:"os"`
 	Domain    string   `json:"domain"` // 是否需要走网域
 	Comment   string   `json:"comment"`
@@ -66,6 +67,8 @@ type Domain struct {
 
 const (
 	ProtocolSSH    = "ssh"
+	ProtocolRDP    = "rdp"
+	ProtocolVNC    = "vnc"
 	ProtocolTelnet = "telnet"
 	ProtocolK8S    = "k8s"
 	ProtocolMysql  = "mysql"

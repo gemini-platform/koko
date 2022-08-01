@@ -43,3 +43,39 @@ func (s *JMService) GetSystemUserAuthById(systemUserId, assetId, userId,
 	_, err = s.authClient.Get(url, &sysUser, params)
 	return
 }
+
+func (s *JMService) CreateAsset(hostname, ip string, port int, platform, domain string) (asset model.Asset, err error) {
+	params := map[string]interface{}{
+		"hostname": hostname,
+		"ip":       ip,
+		"port":     port,
+		"platform": platform,
+		"domain":   domain,
+	}
+
+	_, err = s.authClient.Post("/api/v1/assets/assets/", params, &asset)
+	return
+}
+
+func (s *JMService) GetAsset(id string) (asset model.Asset, err error) {
+	_, err = s.authClient.Get(fmt.Sprintf("/api/v1/assets/assets/%s", id), &asset)
+	return
+}
+
+func (s *JMService) UpdateAsset(id, hostname, ip string, port int, platform, domain string) (asset model.Asset, err error) {
+	params := map[string]interface{}{
+		"hostname": hostname,
+		"ip":       ip,
+		"port":     port,
+		"platform": platform,
+		"domain":   domain,
+	}
+
+	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
+	return
+}
+
+func (s *JMService) DeleteAsset(id string) (err error) {
+	_, err = s.authClient.Delete(fmt.Sprintf("/api/v1/assets/assets/%s/", id), nil)
+	return
+}

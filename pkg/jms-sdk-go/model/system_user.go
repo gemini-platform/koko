@@ -99,3 +99,9 @@ func systemUserPrioritySort(use1, user2 *SystemUser) bool {
 func SortSystemUserByPriority(sysUsers []SystemUser) {
 	systemUserSortBy(systemUserPrioritySort).Sort(sysUsers)
 }
+
+type SystemUserNodeRelation struct {
+	ID           int    `json:"id"`
+	SystemUserID string `json:"systemuser_id"`
+	NodeID       string `json:"node_id"`
+}

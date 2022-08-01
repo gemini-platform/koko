@@ -22,14 +22,16 @@ import (
 	'date_expired': '2089-03-21 18:18:24 +0800'}
 */
 type User struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Role     string `json:"role"`
-	IsValid  bool   `json:"is_valid"`
-	IsActive bool   `json:"is_active"`
-	OTPLevel int    `json:"otp_level"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	Username    string   `json:"username"`
+	Email       string   `json:"email"`
+	Role        string   `json:"role"`
+	IsValid     bool     `json:"is_valid"`
+	IsActive    bool     `json:"is_active"`
+	OTPLevel    int      `json:"otp_level"`
+	Password    string   `json:"password"`
+	SystemRoles []string `json:"system_roles"`
 }
 
 type MiniUser struct {
