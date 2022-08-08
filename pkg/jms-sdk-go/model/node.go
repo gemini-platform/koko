@@ -16,6 +16,8 @@ type Node struct {
 	Parent       string `json:"parent"`
 	AssetsAmount int    `json:"assets_amount"`
 	OrgID        string `json:"org_id"`
+	OrgName      string `json:"org_name"`
+	FullValue    string `json:"full_value"`
 }
 
 type nodeSortBy func(node1, node2 *Node) bool

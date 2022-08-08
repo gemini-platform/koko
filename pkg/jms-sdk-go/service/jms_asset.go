@@ -58,7 +58,7 @@ func (s *JMService) CreateAsset(hostname, ip string, port int, platform, domain 
 }
 
 func (s *JMService) GetAsset(id string) (asset model.Asset, err error) {
-	_, err = s.authClient.Get(fmt.Sprintf("/api/v1/assets/assets/%s", id), &asset)
+	_, err = s.authClient.Get(fmt.Sprintf("/api/v1/assets/assets/%s/", id), &asset)
 	return
 }
 

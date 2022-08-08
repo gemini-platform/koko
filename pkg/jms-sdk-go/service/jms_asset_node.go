@@ -6,6 +6,18 @@ import (
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
 )
 
+type AssetNodeInfo struct {
+	Count    int          `json:"count"`
+	Next     string       `json:"next"`
+	Previous string       `json:"previous"`
+	Results  []model.Node `json:"results"`
+}
+
+func (s *JMService) ListAssetNode() (nodeInfo AssetNodeInfo, err error) {
+	_, err = s.authClient.Get("/api/v1/assets/nodes/", &nodeInfo)
+	return
+}
+
 func (s *JMService) CreateAssetNode(name string) (node model.Node, err error) {
 	params := map[string]string{
 		"value": name,

@@ -105,3 +105,9 @@ type SystemUserNodeRelation struct {
 	SystemUserID string `json:"systemuser_id"`
 	NodeID       string `json:"node_id"`
 }
+
+type SystemUserAssetRelation struct {
+	ID           int    `json:"id"`
+	SystemUserID string `json:"systemuser_id"`
+	AssetID      string `json:"asset_id"`
+}

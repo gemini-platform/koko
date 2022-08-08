@@ -16,10 +16,6 @@ func (s *JMService) CheckUserCookie(cookies map[string]string) (user *model.User
 }
 
 func (s *JMService) CreateUser(name, username, email, password string, systemRoles []string) (user model.User, err error) {
-	if len(systemRoles) <= 0 {
-		systemRoles = []string{SystemRoleIdUser}
-	}
-
 	params := map[string]interface{}{
 		"name":         name,
 		"username":     username,
@@ -33,7 +29,7 @@ func (s *JMService) CreateUser(name, username, email, password string, systemRol
 }
 
 func (s *JMService) GetUser(id string) (user model.User, err error) {
-	_, err = s.authClient.Get(fmt.Sprintf("/api/v1/users/users/%s", id), &user)
+	_, err = s.authClient.Get(fmt.Sprintf("/api/v1/users/users/%s/", id), &user)
 	return
 }
 

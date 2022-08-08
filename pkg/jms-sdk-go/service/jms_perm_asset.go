@@ -60,8 +60,7 @@ func (s *JMService) GetUserPermAssetsByIP(userId, assetIP string) (assets []mode
 	return
 }
 
-func (s *JMService) CreateAssetPermission(name string) (perm model.AssetPermission, err error) {
-	params := map[string]string{"name": name}
+func (s *JMService) CreateAssetPermission(params map[string]interface{}) (perm model.AssetPermission, err error) {
 	_, err = s.authClient.Post("/api/v1/perms/asset-permissions/", params, &perm)
 	return
 }
@@ -71,8 +70,7 @@ func (s *JMService) GetAssetPermission(id string) (perm model.AssetPermission, e
 	return
 }
 
-func (s *JMService) UpdateAssetPermission(id, name string) (perm model.AssetPermission, err error) {
-	params := map[string]string{"name": name}
+func (s *JMService) UpdateAssetPermission(id, params map[string]interface{}) (perm model.AssetPermission, err error) {
 	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/perms/asset-permissions/%s/", id), params, &perm)
 	return
 }
