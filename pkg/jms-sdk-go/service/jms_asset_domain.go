@@ -6,6 +6,11 @@ import (
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
 )
 
+func (s *JMService) ListAssetDomain() (domains []model.Domain, err error) {
+	_, err = s.authClient.Get("/api/v1/assets/domains/", &domains)
+	return
+}
+
 func (s *JMService) CreateAssetDomain(name string) (domain model.Domain, err error) {
 	params := map[string]string{
 		"name": name,

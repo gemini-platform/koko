@@ -61,13 +61,13 @@ func (s *Service) GetRootNode() *model.Node {
 
 // SyncDomain 同步 node 信息
 func (s *Service) SyncAssetNode() {
-	info, err := s.ListAssetNode()
+	nodes, err := s.ListAssetNode()
 	if err != nil {
 		logger.Fatal("failed to list asset node, err: ", err.Error())
 		return
 	}
 
-	for _, node := range info.Results {
+	for _, node := range nodes {
 		if node.Value == "Default" && node.FullValue == "/Default" {
 			s.rootNode = &node
 		}

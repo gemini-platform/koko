@@ -13,8 +13,8 @@ type AssetNodeInfo struct {
 	Results  []model.Node `json:"results"`
 }
 
-func (s *JMService) ListAssetNode() (nodeInfo AssetNodeInfo, err error) {
-	_, err = s.authClient.Get("/api/v1/assets/nodes/", &nodeInfo)
+func (s *JMService) ListAssetNode() (nodes []model.Node, err error) {
+	_, err = s.authClient.Get("/api/v1/assets/nodes/", &nodes)
 	return
 }
 
