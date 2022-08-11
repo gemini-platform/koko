@@ -87,15 +87,32 @@ func (s *Service) SyncAssetNode() {
 }
 
 // SyncDomain 同步自己所在集群的 domain 和 gateway
-func (s *Service) SyncDomain() {
-	d, err := s.GetAssetDomain(s.clusterId)
+func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
+	domains, err := s.ListAssetDomain()
 	if err != nil {
-		d, err = s.CreateAssetDomain(s.clusterId)
-		if err != nil {
-			logger.Fatal("failed to create domain, err: ", err.Error())
-			return
+		logger.Fatal("failed to list asset domain.")
+	}
+
+	for _, domain := range domains {
+		if domain.Name == s.clusterId {
+			s.domain = &domain
+			break
 		}
 	}
 
-	s.domain = &d
+	if s.domain == nil {
+		d, err := s.CreateAssetDomain(s.clusterId)
+		if err != nil {
+			logger.Fatal("failed to create asset domain, err: ", err.Error())
+		}
+
+		d.Gateways = getGateways()
+		for _, gateway := range d.Gateways {
+			_, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, d.ID)
+			if err != nil {
+				logger.Fatal("failed to create asset gateway, err: ", err.Error())
+			}
+		}
+		s.domain = &d
+	}
 }
