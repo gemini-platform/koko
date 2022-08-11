@@ -29,8 +29,6 @@ func Initial(host, accessKeyID, accessKeySecret, clusterID string) {
 	}
 
 	svc = &Service{s, clusterID, nil, nil, nil}
-	svc.SyncDomain()
-	svc.SyncAssetNode()
 }
 
 func GetService() *Service {
