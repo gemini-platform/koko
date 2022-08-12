@@ -82,7 +82,17 @@ func (s *Service) SyncAssetNode() {
 	}
 
 	if s.currentNode == nil {
-		logger.Fatal("failed to find current node, please check cluster id.")
+		logger.Info("current node not found, create new node now.")
+		n, err := s.CreateAssetNode(s.clusterId)
+		if err != nil {
+			logger.Fatal("failed to create asset node, err: ", err.Error())
+		}
+
+		s.currentNode = &n
+	}
+
+	if s.currentNode == nil {
+		logger.Fatal("failed to find current node.")
 	}
 }
 
