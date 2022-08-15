@@ -19,7 +19,7 @@ const (
 	minTimeOut = time.Second * 30
 
 	orgHeaderKey   = "X-JMS-ORG"
-	orgHeaderValue = "ROOT"
+	orgHeaderValue = "00000000000000000000000000000002"
 )
 
 func NewAuthJMService(opts ...Option) (*JMService, error) {
