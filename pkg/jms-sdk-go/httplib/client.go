@@ -86,6 +86,13 @@ func (c *Client) SetAuthSign(auth AuthSign) {
 	c.authSign = auth
 }
 
+func (c *Client) SetProxy(proxy string) {
+	proxyURL, _ := url.Parse(proxy)
+	c.http.Transport = &http.Transport{
+		Proxy: http.ProxyURL(proxyURL),
+	}
+}
+
 func (c *Client) setReqAuthHeader(r *http.Request) error {
 	if len(c.cookies) != 0 {
 		for k, v := range c.cookies {

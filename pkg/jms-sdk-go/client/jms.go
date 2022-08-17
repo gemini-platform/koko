@@ -16,7 +16,7 @@ type Service struct {
 
 var svc *Service
 
-func Initial(host, accessKeyID, accessKeySecret, clusterID string) {
+func Initial(host, accessKeyID, accessKeySecret, clusterID, proxy string) {
 	var s *service.JMService
 	var err error
 	s, err = service.NewAuthJMService(
@@ -26,6 +26,10 @@ func Initial(host, accessKeyID, accessKeySecret, clusterID string) {
 	if err != nil {
 		logger.Fatal("failed to initialize jm service, err: ", err.Error())
 		return
+	}
+
+	if proxy != "" {
+		s.SetProxy(proxy)
 	}
 
 	svc = &Service{s, clusterID, nil, nil, nil}

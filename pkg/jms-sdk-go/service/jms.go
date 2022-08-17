@@ -93,3 +93,7 @@ func (s *JMService) Copy() *JMService {
 func (s *JMService) SetCookie(name, value string) {
 	s.authClient.SetCookie(name, value)
 }
+
+func (s *JMService) SetProxy(proxy string) {
+	s.authClient.SetProxy(proxy)
+}
