@@ -15,12 +15,11 @@ func (s *JMService) CheckUserCookie(cookies map[string]string) (user *model.User
 	return
 }
 
-func (s *JMService) CreateUser(name, username, email, password string, systemRoles []string) (user model.User, err error) {
+func (s *JMService) CreateUser(name, username, email string, systemRoles []string) (user model.User, err error) {
 	params := map[string]interface{}{
 		"name":         name,
 		"username":     username,
 		"email":        email,
-		"password":     password,
 		"system_roles": systemRoles,
 	}
 
@@ -33,11 +32,10 @@ func (s *JMService) GetUser(id string) (user model.User, err error) {
 	return
 }
 
-func (s *JMService) UpdateUser(id, name, email, password string, systemRoles []string) (user model.User, err error) {
+func (s *JMService) UpdateUser(id, name, email string, systemRoles []string) (user model.User, err error) {
 	params := map[string]interface{}{
 		"name":         name,
 		"email":        email,
-		"password":     password,
 		"system_roles": systemRoles,
 	}
 	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/users/users/%s/", id), params, &user)
@@ -46,5 +44,21 @@ func (s *JMService) UpdateUser(id, name, email, password string, systemRoles []s
 
 func (s *JMService) DeleteUser(id string) (err error) {
 	_, err = s.authClient.Delete(fmt.Sprintf("/api/v1/users/users/%s/", id), nil)
+	return
+}
+
+func (s *JMService) UpdateUserPassword(id, password string) (err error) {
+	params := map[string]interface{}{
+		"password": password,
+	}
+	_, err = s.authClient.Patch(fmt.Sprintf("/api/v1/users/users/%s/", id), params, nil)
+	return
+}
+
+func (s *JMService) UpdateUserPublicKey(id, publicKey string) (err error) {
+	params := map[string]interface{}{
+		"public_key": publicKey,
+	}
+	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/users/users/%s/", id), params, nil)
 	return
 }
