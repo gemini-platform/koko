@@ -1,21 +1,17 @@
 package model
 
-import (
-	"time"
-)
-
 type AssetPermission struct {
-	ID          string    `json:"id"`
-	Name        string    `json:"name"`
-	IsActive    bool      `json:"is_active"`
-	DateExpired time.Time `json:"date_expired"`
-	CreatedBy   string    `json:"created_by"`
-	DateCreated time.Time `json:"date_created"`
-	Comment     string    `json:"comment"`
-	DateStart   time.Time `json:"date_start"`
-	OrgID       string    `json:"org_id"`
-	Actions     []string  `json:"actions"`
-	FromTicket  int8      `json:"from_ticket"`
+	ID          string   `json:"id"`
+	Name        string   `json:"name"`
+	IsActive    bool     `json:"is_active"`
+	DateExpired string   `json:"date_expired"`
+	CreatedBy   string   `json:"created_by"`
+	DateCreated string   `json:"date_created"`
+	Comment     string   `json:"comment"`
+	DateStart   string   `json:"date_start"`
+	OrgID       string   `json:"org_id"`
+	Actions     []string `json:"actions"`
+	FromTicket  int8     `json:"from_ticket"`
 }
 
 type AssetPermissionAssetRelation struct {
