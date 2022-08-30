@@ -11,7 +11,7 @@ type AssetPermission struct {
 	DateStart   string   `json:"date_start"`
 	OrgID       string   `json:"org_id"`
 	Actions     []string `json:"actions"`
-	FromTicket  int8     `json:"from_ticket"`
+	FromTicket  bool     `json:"from_ticket"`
 }
 
 type AssetPermissionAssetRelation struct {
