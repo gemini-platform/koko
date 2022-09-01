@@ -32,9 +32,10 @@ func (s *JMService) GetUser(id string) (user model.User, err error) {
 	return
 }
 
-func (s *JMService) UpdateUser(id, name, email string, systemRoles []string) (user model.User, err error) {
+func (s *JMService) UpdateUser(id, name, username, email string, systemRoles []string) (user model.User, err error) {
 	params := map[string]interface{}{
 		"name":         name,
+		"username":     username,
 		"email":        email,
 		"system_roles": systemRoles,
 	}
