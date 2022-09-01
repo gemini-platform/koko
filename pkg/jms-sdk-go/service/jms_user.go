@@ -59,6 +59,6 @@ func (s *JMService) UpdateUserPublicKey(id, publicKey string) (err error) {
 	params := map[string]interface{}{
 		"public_key": publicKey,
 	}
-	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/users/users/%s/", id), params, nil)
+	_, err = s.authClient.Patch(fmt.Sprintf("/api/v1/users/users/%s/", id), params, nil)
 	return
 }
