@@ -38,3 +38,8 @@ func (s *JMService) DeleteAssetSystemUser(id string) (err error) {
 	_, err = s.authClient.Delete(fmt.Sprintf("/api/v1/assets/system-users/%s/", id), nil)
 	return
 }
+
+func (s *JMService) GetAssetSystemUserAuthInfo(id string) (info model.SystemUserAuthInfo, err error) {
+	_, err = s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users/%s/auth-info/", id), &info)
+	return
+}
