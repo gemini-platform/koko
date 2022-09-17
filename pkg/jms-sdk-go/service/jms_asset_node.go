@@ -44,7 +44,7 @@ func (s *JMService) DeleteAssetNode(id string) (err error) {
 	return
 }
 
-func (s *JMService) AssetNodeAddAsset(id, assetIDs []string) (err error) {
+func (s *JMService) AssetNodeAddAsset(id string, assetIDs []string) (err error) {
 	params := map[string][]string{
 		"assets": assetIDs,
 	}
