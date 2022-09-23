@@ -8,10 +8,9 @@ import (
 
 type Service struct {
 	*service.JMService
-	clusterId   string
-	domain      *model.Domain
-	rootNode    *model.Node
-	currentNode *model.Node
+	clusterId string
+	domain    *model.Domain
+	rootNode  *model.Node
 }
 
 var svc *Service
@@ -32,7 +31,7 @@ func Initial(host, accessKeyID, accessKeySecret, clusterID, proxy string) {
 		s.SetProxy(proxy)
 	}
 
-	svc = &Service{s, clusterID, nil, nil, nil}
+	svc = &Service{s, clusterID, nil, nil}
 }
 
 func GetService() *Service {
@@ -45,14 +44,6 @@ func (s *Service) GetDomain() *model.Domain {
 	}
 
 	return s.domain
-}
-
-func (s *Service) GetCurrentNode() *model.Node {
-	if s.currentNode == nil {
-		logger.Fatal("currnet node is nil, please sync asset node first.")
-	}
-
-	return s.currentNode
 }
 
 func (s *Service) GetRootNode() *model.Node {
@@ -75,29 +66,31 @@ func (s *Service) SyncAssetNode() {
 		if node.Value == "Default" && node.FullValue == "/Default" {
 			s.rootNode = &node
 		}
-
-		if node.Value == s.clusterId {
-			s.currentNode = &node
-		}
 	}
 
 	if s.rootNode == nil {
 		logger.Fatal("failed to find root node.")
 	}
+}
 
-	if s.currentNode == nil {
-		logger.Info("current node not found, create new node now.")
-		n, err := s.CreateAssetNode(s.clusterId)
-		if err != nil {
-			logger.Fatal("failed to create asset node, err: ", err.Error())
+func (s *Service) GetOrCreateAssetNode(name string) (*model.Node, error) {
+	nodes, err := s.ListAssetNode()
+	if err != nil {
+		return nil, err
+	}
+	for _, node := range nodes {
+		if node.Key == name {
+			return &node, nil
 		}
-
-		s.currentNode = &n
 	}
 
-	if s.currentNode == nil {
-		logger.Fatal("failed to find current node.")
+	// 不存在就创建一个新的
+	newNode, err := s.CreateAssetNode(name)
+	if err != nil {
+		return nil, err
 	}
+
+	return &newNode, nil
 }
 
 // SyncDomain 同步自己所在集群的 domain 和 gateway
