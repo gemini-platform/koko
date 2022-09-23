@@ -79,7 +79,7 @@ func (s *Service) GetOrCreateAssetNode(name string) (*model.Node, error) {
 		return nil, err
 	}
 	for _, node := range nodes {
-		if node.Key == name {
+		if node.Name == name {
 			return &node, nil
 		}
 	}
