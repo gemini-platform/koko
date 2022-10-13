@@ -105,29 +105,30 @@ func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
 	logger.Info("list asset domain success, domains:", domains)
 	for _, domain := range domains {
 		if domain.Name == s.clusterId {
+			logger.Info("current asset domain found, domain", domain, "cluster_id", s.clusterId)
 			s.domain = &domain
-			break
+			return
 		}
 	}
 
-	if s.domain == nil {
-		logger.Info("current asset domain not found, create it, cluster_id: ", s.clusterId)
-		d, err := s.CreateAssetDomain(s.clusterId)
+	logger.Info("current asset domain not found, create it, cluster_id:", s.clusterId)
+	d, err := s.CreateAssetDomain(s.clusterId)
+	if err != nil {
+		logger.Fatal("failed to create asset domain, err: ", err.Error())
+	}
+
+	logger.Info("create asset domain success, domain:", d, "cluster_id:", s.clusterId)
+	gateways := getGateways()
+	logger.Info("initialize asset gateway, gateways:", gateways)
+	for _, gateway := range gateways {
+		g, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, d.ID)
 		if err != nil {
-			logger.Fatal("failed to create asset domain, err: ", err.Error())
+			logger.Fatal("failed to create asset gateway, err: ", err.Error())
 		}
+		logger.Info("create gateway success, gateway:", g, "cluster_id:", s.clusterId)
 
-		logger.Info("create asset domain success, domain:", d, "cluster_id:", s.clusterId)
-		for _, gateway := range getGateways() {
-			g, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, d.ID)
-			if err != nil {
-				logger.Fatal("failed to create asset gateway, err: ", err.Error())
-			}
-			logger.Info("create gateway success, gateway:", g, "cluster_id:", s.clusterId)
-
-			d.Gateways = append(d.Gateways, g)
-		}
-		logger.Info("set up domain success, domain:", d, "cluster_id:", s.clusterId)
-		s.domain = &d
+		d.Gateways = append(d.Gateways, g)
 	}
+	logger.Info("set up domain success, domain:", d, "cluster_id:", s.clusterId)
+	s.domain = &d
 }
