@@ -57,6 +57,7 @@ type Gateway struct {
 	Username   string `json:"username"`
 	Password   string `json:"password"`
 	PrivateKey string `json:"private_key"`
+	PublicKey  string `json:"public_key"`
 }
 
 type Domain struct {

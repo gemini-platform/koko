@@ -75,6 +75,17 @@ func (s *JMService) UpdateAsset(id, hostname, ip string, port int, platform, dom
 	return
 }
 
+func (s *JMService) UpdateAssetStatus(id, hostname, ip string, active bool) (asset model.Asset, err error) {
+	params := map[string]interface{}{
+		"hostname": hostname,
+		"ip": ip,
+		"is_active": active,
+	}
+
+	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
+	return
+}
+
 func (s *JMService) DeleteAsset(id string) (err error) {
 	_, err = s.authClient.Delete(fmt.Sprintf("/api/v1/assets/assets/%s/", id), nil)
 	return

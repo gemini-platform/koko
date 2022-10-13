@@ -139,7 +139,15 @@ filterGatewayLoop:
 	}
 
 	for _, gateway := range toBeCreateGateways {
-		g, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, s.domain.ID)
+		g, err := s.CreateAssetGateway(
+			gateway.Name,
+			gateway.IP,
+			gateway.Port,
+			s.domain.ID,
+			gateway.Username,
+			gateway.PrivateKey,
+			gateway.PublicKey,
+		)
 		if err != nil {
 			logger.Warn("failed to create asset gateway, err: ", err.Error())
 			continue
