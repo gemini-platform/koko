@@ -107,28 +107,45 @@ func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
 		if domain.Name == s.clusterId {
 			logger.Info("current asset domain found, domain", domain, "cluster_id", s.clusterId)
 			s.domain = &domain
-			return
+			break
 		}
 	}
 
-	logger.Info("current asset domain not found, create it, cluster_id:", s.clusterId)
-	d, err := s.CreateAssetDomain(s.clusterId)
-	if err != nil {
-		logger.Fatal("failed to create asset domain, err: ", err.Error())
+	if s.domain == nil {
+		logger.Info("current asset domain not found, create it, cluster_id:", s.clusterId)
+		d, err := s.CreateAssetDomain(s.clusterId)
+		if err != nil {
+			logger.Fatal("failed to create asset domain, err: ", err.Error())
+		}
+		d.Gateways = make([]model.Gateway, 0)
+		s.domain = &d
+		logger.Info("create asset domain success, domain:", d, "cluster_id:", s.clusterId)
 	}
 
-	logger.Info("create asset domain success, domain:", d, "cluster_id:", s.clusterId)
 	gateways := getGateways()
-	logger.Info("initialize asset gateway, gateways:", gateways)
+	logger.Info("initialize asset gateway, gateways:", gateways, "cluster_id:", s.clusterId)
+
+	toBeCreateGateways := make([]model.Gateway, 0)
+
+filterGatewayLoop:
 	for _, gateway := range gateways {
-		g, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, d.ID)
+		for _, existGateway := range s.domain.Gateways {
+			if existGateway.IP == gateway.IP {
+				continue filterGatewayLoop
+			}
+		}
+
+		toBeCreateGateways = append(toBeCreateGateways, gateway)
+	}
+
+	for _, gateway := range toBeCreateGateways {
+		g, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, s.domain.ID)
 		if err != nil {
-			logger.Fatal("failed to create asset gateway, err: ", err.Error())
+			logger.Warn("failed to create asset gateway, err: ", err.Error())
+			continue
 		}
 		logger.Info("create gateway success, gateway:", g, "cluster_id:", s.clusterId)
-
-		d.Gateways = append(d.Gateways, g)
+		s.domain.Gateways = append(s.domain.Gateways, g)
 	}
-	logger.Info("set up domain success, domain:", d, "cluster_id:", s.clusterId)
-	s.domain = &d
+	logger.Info("set up domain success, domain:", s.domain, "cluster_id:", s.clusterId)
 }
