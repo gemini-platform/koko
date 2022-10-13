@@ -76,6 +76,7 @@ func (s *Service) SyncAssetNode() {
 func (s *Service) GetOrCreateAssetNode(name string) (*model.Node, error) {
 	nodes, err := s.ListAssetNode()
 	if err != nil {
+		logger.Error("failed to list asset node, err: ", err.Error())
 		return nil, err
 	}
 	for _, node := range nodes {
@@ -87,6 +88,7 @@ func (s *Service) GetOrCreateAssetNode(name string) (*model.Node, error) {
 	// 不存在就创建一个新的
 	newNode, err := s.CreateAssetNode(name)
 	if err != nil {
+		logger.Error("failed to create asset node, err: ", err.Error())
 		return nil, err
 	}
 
@@ -100,6 +102,7 @@ func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
 		logger.Fatal("failed to list asset domain.")
 	}
 
+	logger.Info("list asset domain success, domains:", domains)
 	for _, domain := range domains {
 		if domain.Name == s.clusterId {
 			s.domain = &domain
@@ -108,18 +111,23 @@ func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
 	}
 
 	if s.domain == nil {
+		logger.Info("current asset domain not found, create it, cluster_id: ", s.clusterId)
 		d, err := s.CreateAssetDomain(s.clusterId)
 		if err != nil {
 			logger.Fatal("failed to create asset domain, err: ", err.Error())
 		}
 
-		d.Gateways = getGateways()
-		for _, gateway := range d.Gateways {
-			_, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, d.ID)
+		logger.Info("create asset domain success, domain:", d, "cluster_id:", s.clusterId)
+		for _, gateway := range getGateways() {
+			g, err := s.CreateAssetGateway(gateway.Name, gateway.IP, gateway.Port, d.ID)
 			if err != nil {
 				logger.Fatal("failed to create asset gateway, err: ", err.Error())
 			}
+			logger.Info("create gateway success, gateway:", g, "cluster_id:", s.clusterId)
+
+			d.Gateways = append(d.Gateways, g)
 		}
+		logger.Info("set up domain success, domain:", d, "cluster_id:", s.clusterId)
 		s.domain = &d
 	}
 }
