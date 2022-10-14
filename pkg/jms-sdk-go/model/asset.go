@@ -19,6 +19,7 @@ type Asset struct {
 	OrgName   string   `json:"org_name"`
 	Platform  string   `json:"platform"`
 	IsActive  bool     `json:"is_active"` // 判断资产是否禁用
+	Nodes     []Node   `json:"nodes"`
 }
 
 func (a *Asset) String() string {
