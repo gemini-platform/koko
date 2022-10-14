@@ -62,8 +62,10 @@ func (s *Service) SyncAssetNode() {
 		return
 	}
 
+	logger.Info("list asset node success, nodes:", nodes)
 	for _, node := range nodes {
 		if node.Value == "Default" && node.FullValue == "/Default" {
+			logger.Info("root node found, node:", node)
 			s.rootNode = &node
 		}
 	}
@@ -79,8 +81,10 @@ func (s *Service) GetOrCreateAssetNode(name string) (*model.Node, error) {
 		logger.Error("failed to list asset node, err: ", err.Error())
 		return nil, err
 	}
+	logger.Info("list asset node success, nodes:", nodes)
 	for _, node := range nodes {
 		if node.Name == name {
+			logger.Info("target node found, node:", node)
 			return &node, nil
 		}
 	}
@@ -92,6 +96,7 @@ func (s *Service) GetOrCreateAssetNode(name string) (*model.Node, error) {
 		return nil, err
 	}
 
+	logger.Info("target node created, node:", newNode)
 	return &newNode, nil
 }
 

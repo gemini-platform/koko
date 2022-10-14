@@ -44,13 +44,14 @@ func (s *JMService) GetSystemUserAuthById(systemUserId, assetId, userId,
 	return
 }
 
-func (s *JMService) CreateAsset(hostname, ip string, port int, platform, domain string) (asset model.Asset, err error) {
+func (s *JMService) CreateAsset(hostname, ip string, port int, platform, domain string, nodes []string) (asset model.Asset, err error) {
 	params := map[string]interface{}{
 		"hostname": hostname,
 		"ip":       ip,
 		"port":     port,
 		"platform": platform,
 		"domain":   domain,
+		"nodes":    nodes,
 	}
 
 	_, err = s.authClient.Post("/api/v1/assets/assets/", params, &asset)
@@ -62,27 +63,26 @@ func (s *JMService) GetAsset(id string) (asset model.Asset, err error) {
 	return
 }
 
-func (s *JMService) UpdateAsset(id, hostname, ip string, port int, platform, domain string) (asset model.Asset, err error) {
+func (s *JMService) UpdateAsset(id, hostname, ip string, port int, platform, domain string, nodes []string) (asset model.Asset, err error) {
 	params := map[string]interface{}{
 		"hostname": hostname,
 		"ip":       ip,
 		"port":     port,
 		"platform": platform,
 		"domain":   domain,
+		"nodes":    nodes,
 	}
 
 	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
 	return
 }
 
-func (s *JMService) UpdateAssetStatus(id, hostname, ip string, active bool) (asset model.Asset, err error) {
+func (s *JMService) ActiveAsset(id string, active bool) (asset model.Asset, err error) {
 	params := map[string]interface{}{
-		"hostname": hostname,
-		"ip": ip,
 		"is_active": active,
 	}
 
-	_, err = s.authClient.Put(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
+	_, err = s.authClient.Patch(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
 	return
 }
 
