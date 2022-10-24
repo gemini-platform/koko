@@ -19,15 +19,8 @@ func (s *JMService) CheckUserCookie(cookies map[string]string) (user *model.User
 	return
 }
 
-func (s *JMService) CreateUser(name, username, email string, systemRoles []string) (user *model.User, err error) {
-	params := map[string]interface{}{
-		"name":         name,
-		"username":     username,
-		"email":        email,
-		"system_roles": systemRoles,
-	}
-
-	resp, err := s.authClient.Post("/api/v1/users/users/", params, user)
+func (s *JMService) CreateUser(m map[string]interface{}) (user *model.User, err error) {
+	resp, err := s.authClient.Post("/api/v1/users/users/", m, user)
 	if err != nil {
 		logger.Errorf("failed to get user by name, err:%v, resp:%v\n", err, resp)
 		return nil, err
