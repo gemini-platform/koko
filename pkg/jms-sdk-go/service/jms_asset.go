@@ -66,7 +66,7 @@ func (s *JMService) CreateAsset(hostname, ip string, port int, platform, domain 
 }
 
 func (s *JMService) GetAsset(id string) (asset *model.Asset, err error) {
-	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/assets/%s/", id), asset)
+	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/assets/%s/", id), &asset)
 	if err != nil {
 		logger.Errorf("failed to get asset, err:%v, resp:%v\n", err, resp)
 		return nil, err

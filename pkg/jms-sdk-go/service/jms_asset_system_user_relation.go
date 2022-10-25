@@ -63,7 +63,7 @@ func (s *JMService) CreateAssetSystemUserNodeRelation(systemUserID, nodeID strin
 }
 
 func (s *JMService) GetAssetSystemUserNodeRelation(id int) (relation *model.SystemUserNodeRelation, err error) {
-	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users-node-relations/%d/", id), relation)
+	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users-node-relations/%d/", id), &relation)
 	if err != nil {
 		logger.Errorf("failed to get asset system user and node relation, err:%v, resp:%v\n", err, resp)
 		return nil, err

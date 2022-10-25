@@ -67,7 +67,7 @@ func (s *JMService) GetAssetNodeByName(name string) (node *model.Node, err error
 }
 
 func (s *JMService) GetAssetNode(id string) (node *model.Node, err error) {
-	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/nodes/%s/", id), node)
+	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/nodes/%s/", id), &node)
 	if err != nil {
 		logger.Errorf("failed to get asset node, err:%v, resp:%v\n", err, resp)
 		return nil, err

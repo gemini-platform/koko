@@ -51,7 +51,7 @@ func (s *JMService) GetAssetSystemUserByName(name string) (user *model.SystemUse
 }
 
 func (s *JMService) GetAssetSystemUser(id string) (user *model.SystemUser, err error) {
-	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users/%s/", id), user)
+	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users/%s/", id), &user)
 	if err != nil {
 		logger.Errorf("get asset system user failed, err:%v, resp:%v\n", err, resp)
 		return nil, err
@@ -91,7 +91,7 @@ func (s *JMService) DeleteAssetSystemUser(id string) (err error) {
 }
 
 func (s *JMService) GetAssetSystemUserAuthInfo(id string) (info *model.SystemUserAuthInfo, err error) {
-	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users/%s/auth-info/", id), info)
+	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/system-users/%s/auth-info/", id), &info)
 	if err != nil {
 		logger.Errorf("failed to get asset system user auth info, err:%v, resp:%v\n", err, resp)
 		return nil, err

@@ -29,7 +29,7 @@ func (s *JMService) CreateAssetGateway(name, ip string, port int, domain, userna
 }
 
 func (s *JMService) GetAssetGateway(id string) (gateway *model.Gateway, err error) {
-	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/gateways/%s/", id), gateway)
+	resp, err := s.authClient.Get(fmt.Sprintf("/api/v1/assets/gateways/%s/", id), &gateway)
 	if err != nil {
 		logger.Errorf("failed to get asset gateway, err:%v, resp:%v\n", err, resp)
 		return nil, err
