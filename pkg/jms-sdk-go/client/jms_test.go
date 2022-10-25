@@ -21,6 +21,10 @@ var (
 		"system_roles":[]string{service.SystemRoleIdUser},
 	}
 
+	assetInfo = map[string]interface{}{
+		"id": "e84af712d8ce4b69abf1430cbfa4e16e",
+	}
+
 	permInfo = map[string]interface{}{
 		"name": "gemini-perm",
 		"actions":      []string{model.ActionALL},
@@ -97,6 +101,13 @@ func Test_GetOrCreateAssetNode(t *testing.T) {
 
 func Test_GetOrCreateAssetPermission(t *testing.T) {
 	_, err := svc.GetOrCreateAssetPermission(permInfo)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_UpdateAssetName(t *testing.T) {
+	_, err := svc.UpdateAssetName(assetInfo["id"].(string), "Test")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -96,6 +96,21 @@ func (s *JMService) UpdateAsset(id, hostname, ip string, port int, platform, dom
 	return
 }
 
+func (s *JMService) UpdateAssetName(id, hostname string) (asset *model.Asset, err error) {
+	params := map[string]interface{}{
+		"hostname": hostname,
+	}
+
+	resp, err := s.authClient.Patch(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
+	if err != nil {
+		logger.Errorf("failed to update asset name, err:%v, resp:%v\n", err, resp)
+		return nil, err
+	}
+
+	logger.Debugf("update asset name success, asset:%v, resp:%v\n", asset, resp)
+	return
+}
+
 func (s *JMService) ActiveAsset(id string, active bool) (asset *model.Asset, err error) {
 	params := map[string]interface{}{
 		"is_active": active,
