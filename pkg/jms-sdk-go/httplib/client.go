@@ -1,6 +1,7 @@
 package httplib
 
 import (
+	"crypto/tls"
 	"bufio"
 	"bytes"
 	"encoding/json"
@@ -90,6 +91,24 @@ func (c *Client) SetProxy(proxy string) {
 	proxyURL, _ := url.Parse(proxy)
 	c.http.Transport = &http.Transport{
 		Proxy: http.ProxyURL(proxyURL),
+	}
+}
+
+func (c *Client) SetInsecureSkipVerify(verify bool) {
+	var transport *http.Transport
+	if c.http.Transport == nil {
+		transport = &http.Transport{}
+		 c.http.Transport = transport
+	} else {
+		transport = c.http.Transport.(*http.Transport)
+	}
+
+	if transport.TLSClientConfig == nil {
+		transport.TLSClientConfig = &tls.Config{
+			InsecureSkipVerify: verify,
+		}
+	} else {
+		transport.TLSClientConfig.InsecureSkipVerify = verify
 	}
 }
 
@@ -184,6 +203,7 @@ func (c *Client) Do(method, reqUrl string, data, res interface{}, params ...map[
 		switch {
 		case strings.Contains(resp.Header.Get("Content-Type"), "application/json"):
 			err = json.Unmarshal(body, res)
+			fmt.Println(string(body))
 			if err != nil {
 				msg := fmt.Sprintf("%s %s failed, unmarshal '%s' response failed: %s", req.Method, req.URL, body[:12], err)
 				err = errors.New(msg)

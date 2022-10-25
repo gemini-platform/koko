@@ -5,18 +5,33 @@ import (
 	"testing"
 
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
-	"github.com/jumpserver/koko/pkg/logger"
+	"github.com/jumpserver/koko/pkg/jms-sdk-go/service"
 )
 
 var (
-	accessKeyID string
-	accessKeySecret string
+	host = "https://jumpserver-test4.virtaicloud.com:31443"
+	accessKeyID = "32e04022-92db-4e0e-a197-bab2eff430db"
+	accessKeySecret =  "223f82fd-dca0-4bf0-ae79-cbb4da42810c"
 
+	userInfo = map[string]interface{}{
+		"id": "1754",
+		"name": "超管",
+		"username": "gemini",
+		"email":        "admini@local.com",
+		"system_roles":[]string{service.SystemRoleIdUser},
+	}
+
+	permInfo = map[string]interface{}{
+		"name": "gemini-perm",
+		"actions":      []string{model.ActionALL},
+		"users":        []string{"33ba346394f24a64b6827c515393245d"},
+		"system_users": []string{"079ae82a301340c4a9c17e4a3e720205"},
+		"nodes":        []string{"bb79b288a043425aa002ca31ee70e665"},
+	}
 )
 
 func init() {
-	accessKeyID = "32e04022-92db-4e0e-a197-bab2eff430db"
-	accessKeySecret = "223f82fd-dca0-4bf0-ae79-cbb4da42810c"
+	Initial(host, accessKeyID, accessKeySecret, "1", "")
 }
 
 func Test_ListAssetNode(t *testing.T) {
@@ -42,7 +57,47 @@ func Test_ListAssetNode(t *testing.T) {
 	t.Fatal("root node not found")
 }
 
+func Test_UnmarshalSystemUser(t *testing.T) {
+	str := `{"id":"0507cef5-9b2d-4913-a520-d6599b31d76d","name":"1754","username":"root","ssh_key_fingerprint":"MD5:64:a4:1c:87:16:7a:a9:85:c4:08:b8:9d:95:80:ae:c2","type":"common","type_display":"普通用户","protocol":"ssh","is_asset_protocol":true,"login_mode":"auto","login_mode_display":"托管密码","priority":81,"sudo":"/bin/whoami","shell":"/bin/bash","sftp_root":"tmp","home":"","system_groups":"","ad_domain":"","username_same_with_user":false,"auto_push":true,"su_enabled":false,"su_from":null,"date_created":"2022/10/25 18:32:34 +0800","date_updated":"2022/10/25 18:32:34 +0800","comment":"","created_by":"Administrator","cmd_filters":[],"assets_amount":0,"applications_amount":0,"nodes":[],"org_id":"00000000-0000-0000-0000-000000000002","org_name":"Default"}`
+
+	var systemUser *model.SystemUser
+	err := json.Unmarshal([]byte(str), &systemUser)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_GetUserByUserName(t *testing.T) {
+	_, err := svc.GetUserByUserName(userInfo["username"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_GetOrCreateUser(t *testing.T) {
+	_, err := svc.GetOrCreateUser(userInfo)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_GetOrCreateAssetSystemUser(t *testing.T) {
+	_, err := svc.GetOrCreateAssetSystemUser(userInfo["id"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
 func Test_GetOrCreateAssetNode(t *testing.T) {
-	logger.Debug("accessKeyID", accessKeyID)
-	logger.Debug("accessKeySecret", accessKeySecret)
+	_, err := svc.GetOrCreateAssetSystemUser(userInfo["id"].(string))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func Test_GetOrCreateAssetPermission(t *testing.T) {
+	_, err := svc.GetOrCreateAssetPermission(permInfo)
+	if err != nil {
+		t.Fatal(err)
+	}
 }

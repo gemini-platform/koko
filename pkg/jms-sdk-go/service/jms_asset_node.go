@@ -33,7 +33,7 @@ func (s *JMService) CreateAssetNode(name string) (node *model.Node, err error) {
 		"value": name,
 	}
 
-	resp, err := s.authClient.Post("/api/v1/assets/nodes/", params, node)
+	resp, err := s.authClient.Post("/api/v1/assets/nodes/", params, &node)
 	if err != nil {
 		logger.Errorf("failed to create asset node, err:%v, resp:%v\n", err, resp)
 		return nil, err
@@ -81,7 +81,7 @@ func (s *JMService) UpdateAssetNode(id, name string) (node *model.Node, err erro
 	params := map[string]string{
 		"value": name,
 	}
-	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/nodes/%s/", id), params, node)
+	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/nodes/%s/", id), params, &node)
 	if err != nil {
 		logger.Errorf("failed to update asset node, err:%v, resp:%v\n", err, resp)
 		return nil, err

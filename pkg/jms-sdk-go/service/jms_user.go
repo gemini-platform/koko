@@ -20,9 +20,9 @@ func (s *JMService) CheckUserCookie(cookies map[string]string) (user *model.User
 }
 
 func (s *JMService) CreateUser(m map[string]interface{}) (user *model.User, err error) {
-	resp, err := s.authClient.Post("/api/v1/users/users/", m, user)
+	resp, err := s.authClient.Post("/api/v1/users/users/", m, &user)
 	if err != nil {
-		logger.Errorf("failed to get user by name, err:%v, resp:%v\n", err, resp)
+		logger.Errorf("failed to create user, err:%v, resp:%v\n", err, resp)
 		return nil, err
 	}
 

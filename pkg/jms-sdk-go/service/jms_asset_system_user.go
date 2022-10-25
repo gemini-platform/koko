@@ -18,7 +18,7 @@ func (s *JMService) CreateAssetSystemUser(name, username string) (user *model.Sy
 		"protocol":          model.ProtocolSSH,
 	}
 
-	resp, err := s.authClient.Post("/api/v1/assets/system-users/", params, user)
+	resp, err := s.authClient.Post("/api/v1/assets/system-users/", params, &user)
 	if err != nil {
 		logger.Errorf("failed to create asset system user, err:%v, resp: %v\n", err, resp)
 		return nil, err
@@ -69,7 +69,7 @@ func (s *JMService) UpdateAssetSystemUser(id, name, username, privateKey, public
 		"public_key":  publicKey,
 		"protocol":    model.ProtocolSSH,
 	}
-	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/system-users/%s/", id), params, user)
+	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/system-users/%s/", id), params, &user)
 	if err != nil {
 		logger.Errorf("faiiled to update asset system user, err:%v, resp:%v\n", err, resp)
 		return nil, err

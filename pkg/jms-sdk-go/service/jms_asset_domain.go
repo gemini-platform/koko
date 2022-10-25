@@ -22,7 +22,7 @@ func (s *JMService) CreateAssetDomain(name string) (domain *model.Domain, err er
 	params := map[string]string{
 		"name": name,
 	}
-	resp, err := s.authClient.Post("/api/v1/assets/domains/", params, domain)
+	resp, err := s.authClient.Post("/api/v1/assets/domains/", params, &domain)
 	if err != nil {
 		logger.Errorf("failed to create asset domain, err:%v, resp:%v\n", err, resp)
 		return nil, err
@@ -47,7 +47,7 @@ func (s *JMService) UpdateAssetDomain(id, name string) (domain *model.Domain, er
 	params := map[string]string{
 		"name": name,
 	}
-	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/domains/%s/", id), params, domain)
+	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/domains/%s/", id), params, &domain)
 	if err != nil {
 		logger.Errorf("failed to update asset domain, err:%v, resp:%v\n", err, resp)
 		return nil, err

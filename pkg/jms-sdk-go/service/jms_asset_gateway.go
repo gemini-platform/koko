@@ -18,7 +18,7 @@ func (s *JMService) CreateAssetGateway(name, ip string, port int, domain, userna
 		"private_key": privateKey,
 		"public_key":  publicKey,
 	}
-	resp, err := s.authClient.Post("/api/v1/assets/gateways/", params, gateway)
+	resp, err := s.authClient.Post("/api/v1/assets/gateways/", params, &gateway)
 	if err != nil {
 		logger.Errorf("failed to create asset gateway, err:%v, resp:%v\n", err, resp)
 		return nil, err
@@ -50,7 +50,7 @@ func (s *JMService) UpdateAssetGateway(id, name, ip string, port int, domain, us
 		"private_key": privateKey,
 		"public_key":  publicKey,
 	}
-	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/gateways/%s/", id), params, gateway)
+	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/gateways/%s/", id), params, &gateway)
 	if err != nil {
 		logger.Errorf("failed to update asset gateway, err:%v, resp:%v\n", err, resp)
 		return nil, err

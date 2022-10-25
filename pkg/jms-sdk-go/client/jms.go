@@ -31,6 +31,8 @@ func Initial(host, accessKeyID, accessKeySecret, clusterID, proxy string) {
 		s.SetProxy(proxy)
 	}
 
+	s.SetInsecureSkipVerify(true)
+
 	svc = &Service{s, clusterID, nil, nil}
 }
 

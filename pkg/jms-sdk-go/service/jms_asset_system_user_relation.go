@@ -26,7 +26,7 @@ func (s *JMService) CreateAssetSystemUserAssetRelation(asset, systemUser string)
 		"systemuser": systemUser,
 	}
 
-	resp, err := s.authClient.Post("/api/v1/assets/system-users-assets-relations/", params, relation)
+	resp, err := s.authClient.Post("/api/v1/assets/system-users-assets-relations/", params, &relation)
 	if err != nil {
 		logger.Errorf("failed to get asset node, err:%v, resp:%v\n", err, resp)
 		return nil, err

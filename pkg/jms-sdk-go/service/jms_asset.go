@@ -86,7 +86,7 @@ func (s *JMService) UpdateAsset(id, hostname, ip string, port int, platform, dom
 		"nodes":    nodes,
 	}
 
-	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, asset)
+	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/assets/%s/", id), params, &asset)
 	if err != nil {
 		logger.Errorf("failed to update asset, err:%v, resp:%v\n", err, resp)
 		return nil, err

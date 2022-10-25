@@ -12,6 +12,9 @@ type AssetPermission struct {
 	OrgID       string   `json:"org_id"`
 	Actions     []string `json:"actions"`
 	FromTicket  bool     `json:"from_ticket"`
+	SystemUsers []string `json:"system_users"`
+	Nodes       []string `json:"nodes"`
+	Assets      []string `json:"assets"`
 }
 
 type AssetPermissionAssetRelation struct {

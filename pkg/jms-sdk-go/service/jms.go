@@ -97,3 +97,7 @@ func (s *JMService) SetCookie(name, value string) {
 func (s *JMService) SetProxy(proxy string) {
 	s.authClient.SetProxy(proxy)
 }
+
+func (s *JMService) SetInsecureSkipVerify(verify bool) {
+	s.authClient.SetInsecureSkipVerify(verify)
+}
