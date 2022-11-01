@@ -1,6 +1,9 @@
 package client
 
 import (
+	"github.com/jumpserver/koko/pkg/jms-sdk-go/service"
+	"errors"
+
 	"github.com/jumpserver/koko/pkg/logger"
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
 )
@@ -15,53 +18,33 @@ func (s *Service) GetDomain() *model.Domain {
 
 // SyncDomain 同步自己所在集群的 domain 和 gateway
 func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
-	domains, err := s.ListAssetDomain()
+	domain, err := s.GetOrCreateAssetDomain(s.clusterId)
 	if err != nil {
-		logger.Fatal("failed to list asset domain.")
+		logger.Fatal("failed to get asset domain.")
 	}
 
-	logger.Debugf("list asset domain success, domains:%v\n", domains)
-	for _, domain := range domains {
-		if domain.Name == s.clusterId {
-			logger.Debugf("current asset domain found, domain: %v, cluster_id:%v\n", domain, s.clusterId)
-			s.domain = &domain
-			break
-		}
-	}
+	s.domain = domain
 
-	if s.domain == nil {
-		logger.Debugf("current asset domain not found, create it, cluster_id:%v\n", s.clusterId)
-		d, err := s.CreateAssetDomain(s.clusterId)
-		if err != nil {
-			logger.Fatal("failed to create asset domain, err: ", err.Error())
+	if len(domain.Gateways) > 0 {
+		// 这里全部移除一遍，防止秘钥更新了不同步
+		for _, gateway := range domain.Gateways {
+			err = s.DeleteAssetDomain(gateway.ID)
+			if err != nil {
+				logger.Warnf("delete gateway failed, gateway:%v, cluster_id:%v\n", gateway, s.clusterId)
+				continue
+			}
 		}
-		d.Gateways = make([]model.Gateway, 0)
-		s.domain = d
-		logger.Debugf("create asset domain success, domain: %v, cluster_id:%v\n", d, s.clusterId)
 	}
 
 	gateways := getGateways()
 	logger.Debugf("initialize asset gateway, gateways:%v, cluster_id:%v\n", gateways, s.clusterId)
 
-	toBeCreateGateways := make([]model.Gateway, 0)
-
-filterGatewayLoop:
 	for _, gateway := range gateways {
-		for _, existGateway := range s.domain.Gateways {
-			if existGateway.IP == gateway.IP {
-				continue filterGatewayLoop
-			}
-		}
-
-		toBeCreateGateways = append(toBeCreateGateways, gateway)
-	}
-
-	for _, gateway := range toBeCreateGateways {
 		g, err := s.CreateAssetGateway(
 			gateway.Name,
 			gateway.IP,
 			gateway.Port,
-			s.domain.ID,
+			domain.ID,
 			gateway.Username,
 			gateway.PrivateKey,
 			gateway.PublicKey,
@@ -71,7 +54,22 @@ filterGatewayLoop:
 			continue
 		}
 		logger.Debugf("create gateway success, gateway:%v, cluster_id:%v\n", g, s.clusterId)
-		s.domain.Gateways = append(s.domain.Gateways, *g)
+		domain.Gateways = append(domain.Gateways, *g)
 	}
 	logger.Debugf("set up domain success, domain:%v, cluster_id:%v\n", s.domain, s.clusterId)
+}
+
+func (s *Service) GetOrCreateAssetDomain(name string) (*model.Domain, error) {
+	domain, err := s.GetAssetDomainByName(name)
+	if err != nil {
+		if errors.Is(err, service.ErrAssetDomainNotFound) {
+			return s.CreateAssetDomain(name)
+		}
+
+		logger.Errorf("failed to get asset domain, err: %v\n", err)
+		return nil, err
+	}
+
+	logger.Debugf("target asset domain found, domain:%v\n", domain)
+	return domain, nil
 }

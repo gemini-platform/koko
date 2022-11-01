@@ -1,11 +1,14 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/jumpserver/koko/pkg/logger"
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
 )
+
+var ErrAssetDomainNotFound = errors.New("asset domain found")
 
 func (s *JMService) ListAssetDomain() (domains []model.Domain, err error) {
 	resp, err := s.authClient.Get("/api/v1/assets/domains/", &domains)
@@ -30,6 +33,29 @@ func (s *JMService) CreateAssetDomain(name string) (domain *model.Domain, err er
 
 	logger.Debugf("create asset domain success, domain:%v, resp:%v\n", domain, resp)
 	return domain, nil
+}
+
+func (s *JMService) GetAssetDomainByName(name string) (domain *model.Domain, err error) {
+	params := map[string]string{
+		"name": name,
+	}
+
+	var domains []model.Domain
+	resp, err := s.authClient.Get("/api/v1/assets/domains/", &domains, params)
+	if err != nil {
+		logger.Errorf("failed to list asset domain by name, err:%v, resp:%v\n", err, resp)
+		return domain, err
+	}
+
+	if len(domains) == 0 {
+		logger.Errorf("asset domain can not fond by name, err:%v, resp:%v\n", err, resp)
+		return domain, ErrAssetDomainNotFound
+	} else {
+		domain = &domains[0]
+	}
+
+	logger.Debugf("get asset domain by name success, domain:%v, resp:%v\n", domain, resp)
+	return
 }
 
 func (s *JMService) GetAssetDomain(id string) (domain *model.Domain, err error) {
