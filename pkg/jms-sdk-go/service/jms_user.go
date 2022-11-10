@@ -56,14 +56,8 @@ func (s *JMService) GetUser(id string) (user model.User, err error) {
 	return
 }
 
-func (s *JMService) UpdateUser(id, name, username, email string, systemRoles []string) (user *model.User, err error) {
-	params := map[string]interface{}{
-		"name":         name,
-		"username":     username,
-		"email":        email,
-		"system_roles": systemRoles,
-	}
-	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/users/users/%s/", id), params, &user)
+func (s *JMService) UpdateUser(id string, m map[string]interface{}) (user *model.User, err error) {
+	resp, err := s.authClient.Patch(fmt.Sprintf("/api/v1/users/users/%s/", id), m, &user)
 	if err != nil {
 		logger.Errorf("failed to update user, err:%v, resp:%v\n", err, resp)
 		return nil, err
