@@ -1,6 +1,13 @@
 package service
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+
+	"github.com/jumpserver/koko/pkg/logger"
+)
+
+var ErrAssetPermissionAssetRelationNotFound = errors.New("asset permission asset relation not found")
 
 type AssetPermissionAssetRelation struct {
 	ID                     int    `json:"id"`
@@ -10,7 +17,7 @@ type AssetPermissionAssetRelation struct {
 	AssetPermissionDisplay string `json:"asset_permission_display"`
 }
 
-func (s *JMService) CreateAssetPermissionAssetRelation(assetPermission, asset string) (relation AssetPermissionAssetRelation, err error) {
+func (s *JMService) CreateAssetPermissionAssetRelation(assetPermission, asset string) (relation *AssetPermissionAssetRelation, err error) {
 	params := map[string]string{
 		"asset":           asset,
 		"assetpermission": assetPermission,
@@ -18,6 +25,28 @@ func (s *JMService) CreateAssetPermissionAssetRelation(assetPermission, asset st
 
 	_, err = s.authClient.Post("/api/v1/perms/asset-permissions-assets-relations/", params, &relation)
 	return
+}
+
+func (s *JMService) GetAssetPermissionAssetRelationByID(assetPermission, asset string) (relation *AssetPermissionAssetRelation, err error) {
+	params := map[string]string{
+		"asset":           asset,
+		"assetpermission": assetPermission,
+	}
+
+	var relations []AssetPermissionAssetRelation
+	resp, err := s.authClient.Get("/api/v1/perms/asset-permissions-assets-relations/", &relations, params)
+	if err != nil {
+		logger.Errorf("failed to get asset permission and asset relation by id, err:%v, resp:%v\n", err, resp)
+		return nil, err
+	}
+
+	if len(relations) < 1 {
+		return nil, ErrAssetPermissionNotFound
+	} else {
+		relation = &relations[0]
+	}
+
+	return relation, nil
 }
 
 func (s *JMService) DeleteAssetPermissionAssetRelation(id string) (err error) {
@@ -33,7 +62,7 @@ type AssetPermissionNodeRelation struct {
 	AssetPermissionDisplay string `json:"assetpermission_display"`
 }
 
-func (s *JMService) CreateAssetPermissionNodeRelation(assetPermission, node string) (relation AssetPermissionNodeRelation, err error) {
+func (s *JMService) CreateAssetPermissionNodeRelation(assetPermission, node string) (relation *AssetPermissionNodeRelation, err error) {
 	params := map[string]string{
 		"node":            node,
 		"assetpermission": assetPermission,
@@ -56,7 +85,7 @@ type AssetPermissionSystemUserRelation struct {
 	AssetPermissionDisplay string `json:"assetpermission_display"`
 }
 
-func (s *JMService) CreateAssetPermissionSystemUserRelation(assetPermission, systemUser string) (relation AssetPermissionSystemUserRelation, err error) {
+func (s *JMService) CreateAssetPermissionSystemUserRelation(assetPermission, systemUser string) (relation *AssetPermissionSystemUserRelation, err error) {
 	params := map[string]string{
 		"systemuser":      systemUser,
 		"assetpermission": assetPermission,
@@ -79,7 +108,7 @@ type AssetPermissionUserRelation struct {
 	AssetPermissionDisplay string `json:"assetpermission_display"`
 }
 
-func (s *JMService) CreateAssetPermissionUserRelation(assetPermission, systemUser string) (relation AssetPermissionUserRelation, err error) {
+func (s *JMService) CreateAssetPermissionUserRelation(assetPermission, systemUser string) (relation *AssetPermissionUserRelation, err error) {
 	params := map[string]string{
 		"systemuser":      systemUser,
 		"assetpermission": assetPermission,

@@ -54,3 +54,12 @@ func (s *Service) CreateAssetPerm(userID, username string) (*model.AssetPermissi
 	logger.Debugf("create asset perm success, perm:%v\n", assetPerm)
 	return assetPerm, nil
 }
+
+func (s *Service) CreateOrGetAssetPermissionAssetRelation(assetPermission, asset string) (relation *service.AssetPermissionAssetRelation, err error) {
+	relation, err = s.CreateAssetPermissionAssetRelation(assetPermission, asset)
+	if err != nil {
+		relation, err = s.GetAssetPermissionAssetRelationByID(assetPermission, asset)
+	}
+
+	return
+}
