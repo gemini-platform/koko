@@ -1,11 +1,14 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
 	"github.com/jumpserver/koko/pkg/logger"
 )
+
+var ErrAssetNotFound = errors.New("asset not found")
 
 func (s *JMService) GetAssetById(assetId string) (asset model.Asset, err error) {
 	url := fmt.Sprintf(AssetDetailURL, assetId)
@@ -136,3 +139,42 @@ func (s *JMService) DeleteAsset(id string) (err error) {
 	logger.Debugf("delete asset success, id:%v, resp:%v\n", id, resp)
 	return
 }
+
+func (s *JMService) GetAssetByHostname(hostname string) (asset *model.Asset, err error) {
+	params := map[string]string{
+		"hostname": hostname,
+	}
+
+	var assets []model.Asset
+	resp, err := s.authClient.Get("/api/v1/assets/assets/", &assets, params)
+	if err != nil {
+		logger.Errorf("failed to list asset by name, err:%v, resp:%v\n", err, resp)
+		return nil, err
+	}
+
+	if len(assets) == 0 {
+		logger.Errorf("asset can not fond by name, err:%v, resp:%v\n", err, resp)
+		return asset, ErrAssetNotFound
+	} else {
+		asset = &assets[0]
+	}
+
+	logger.Debugf("get asset success, asset:%v, resp:%v\n", asset, resp)
+	return
+}
+
+func (s *JMService) GetOrCreateAsset(hostname, ip string, port int, platform, domain string, nodes []string) (*model.Asset, error) {
+	asset, err := s.GetAssetByHostname(hostname)
+	if err != nil {
+		if errors.Is(err, ErrAssetNotFound) {
+			return s.CreateAsset(hostname, ip, port, platform, domain, nodes)
+		}
+
+		logger.Errorf("failed to get asset: %v\n", err)
+		return nil, err
+	}
+
+	logger.Debugf("target asset found, asset:%v\n", asset)
+	return asset, nil
+}
+
