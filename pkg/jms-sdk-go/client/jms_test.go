@@ -86,14 +86,14 @@ func Test_GetOrCreateUser(t *testing.T) {
 }
 
 func Test_GetOrCreateAssetSystemUser(t *testing.T) {
-	_, err := svc.GetOrCreateAssetSystemUser(userInfo["id"].(string))
+	_, err := svc.GetOrCreateAssetSystemUser(userInfo["id"].(string), "root", "/")
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func Test_GetOrCreateAssetNode(t *testing.T) {
-	_, err := svc.GetOrCreateAssetSystemUser(userInfo["id"].(string))
+	_, err := svc.GetOrCreateAssetSystemUser(userInfo["id"].(string), "root", "/")
 	if err != nil {
 		t.Fatal(err)
 	}

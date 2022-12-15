@@ -8,11 +8,11 @@ import (
 	"github.com/jumpserver/koko/pkg/logger"
 )
 
-func (s *Service) GetOrCreateAssetSystemUser(name string) (*model.SystemUser, error) {
+func (s *Service) GetOrCreateAssetSystemUser(name, systemUser, sftpRoot string) (*model.SystemUser, error) {
 	user, err := s.GetAssetSystemUserByName(name)
 	if err != nil {
 		if errors.Is(err, service.ErrAssetSystemUserNotFound) {
-			return s.CreateAssetSystemUser(name, "root")
+			return s.CreateAssetSystemUser(name, systemUser, sftpRoot)
 		}
 
 		logger.Errorf("failed to get asset system user, err:%v\n", err)

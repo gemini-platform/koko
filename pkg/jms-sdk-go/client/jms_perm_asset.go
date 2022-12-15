@@ -26,8 +26,8 @@ func (s *Service) GetOrCreateAssetPermission(m map[string]interface{}) (perm *mo
 
 // CreateJmsAssetPerm
 // 系统用户可以放在有资产的时候，尝试创建，如果创建不成功，就重试
-func (s *Service) CreateAssetPerm(userID, username string) (*model.AssetPermission, error) {
-	systemUser, err := s.GetOrCreateAssetSystemUser(fmt.Sprintf("%s-ssh", username))
+func (s *Service) CreateAssetPerm(userID, username, systemUserName, sftpRoot string) (*model.AssetPermission, error) {
+	systemUser, err := s.GetOrCreateAssetSystemUser(fmt.Sprintf("%s-ssh", username), systemUserName, sftpRoot)
 	if err != nil {
 		logger.Errorf("failed to create system user, err:%v\n", err)
 		return nil, err

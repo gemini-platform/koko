@@ -4,18 +4,19 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jumpserver/koko/pkg/logger"
 	"github.com/jumpserver/koko/pkg/jms-sdk-go/model"
+	"github.com/jumpserver/koko/pkg/logger"
 )
 
 var ErrAssetSystemUserNotFound = errors.New("asset system user not found")
 
-func (s *JMService) CreateAssetSystemUser(name, username string) (user *model.SystemUser, err error) {
+func (s *JMService) CreateAssetSystemUser(name, username, sftpRoot string) (user *model.SystemUser, err error) {
 	params := map[string]interface{}{
 		"name":              name,
 		"username":          username,
 		"auto_generate_key": true,
 		"protocol":          model.ProtocolSSH,
+		"sftp_root":         sftpRoot,
 	}
 
 	resp, err := s.authClient.Post("/api/v1/assets/system-users/", params, &user)
@@ -61,13 +62,14 @@ func (s *JMService) GetAssetSystemUser(id string) (user *model.SystemUser, err e
 	return user, nil
 }
 
-func (s *JMService) UpdateAssetSystemUser(id, name, username, privateKey, publicKey string) (user *model.SystemUser, err error) {
+func (s *JMService) UpdateAssetSystemUser(id, name, username, sftpRoot, privateKey, publicKey string) (user *model.SystemUser, err error) {
 	params := map[string]string{
 		"name":        name,
 		"username":    username,
 		"private_key": privateKey,
 		"public_key":  publicKey,
 		"protocol":    model.ProtocolSSH,
+		"sftp_root":   sftpRoot,
 	}
 	resp, err := s.authClient.Put(fmt.Sprintf("/api/v1/assets/system-users/%s/", id), params, &user)
 	if err != nil {

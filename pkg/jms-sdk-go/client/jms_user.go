@@ -11,7 +11,7 @@ import (
 func (s *Service) GetOrCreateUser(m map[string]interface{}) (user *model.User, err error) {
 	user, err = s.GetUserByUserName(m["username"].(string))
 	if err != nil {
-		if errors.Is(err, service.ErrAssetPermissionNotFound) {
+		if errors.Is(err, service.ErrUserNotFound) {
 			return s.CreateUser(m)
 		}
 
