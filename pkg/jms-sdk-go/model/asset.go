@@ -62,9 +62,10 @@ type Gateway struct {
 }
 
 type Domain struct {
-	ID       string    `json:"id"`
-	Gateways []Gateway `json:"gateways"`
-	Name     string    `json:"name"`
+	ID           string    `json:"id"`
+	Gateways     []Gateway `json:"gateways"`
+	GatewayCount int       `json:"gateway_count"`
+	Name         string    `json:"name"`
 }
 
 const (

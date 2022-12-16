@@ -39,6 +39,21 @@ func (s *JMService) GetAssetGateway(id string) (gateway *model.Gateway, err erro
 	return gateway, nil
 }
 
+func (s *JMService) GetAssetGatewaysByDomainName(name string) (gateways []model.Gateway, err error) {
+	params := map[string]string{
+		"domain_name": name,
+	}
+
+	resp, err := s.authClient.Get("/api/v1/assets/gateways/", &gateways, params)
+	if err != nil {
+		logger.Errorf("failed to get asset gateways by domain name, err:%v, resp:%v\n", err, resp)
+		return nil, err
+	}
+
+	logger.Debugf("get asset gateways by domain name success, gateways:%v, resp:%v\n", gateways, resp)
+	return gateways, nil
+}
+
 func (s *JMService) UpdateAssetGateway(id, name, ip string, port int, domain, username, privateKey, publicKey string) (gateway *model.Gateway, err error) {
 	params := map[string]interface{}{
 		"name":        name,

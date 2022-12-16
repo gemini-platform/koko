@@ -25,10 +25,14 @@ func (s *Service) SyncDomain(getGateways func() []model.Gateway) {
 
 	s.domain = domain
 
-	if len(domain.Gateways) > 0 {
+	if domain.GatewayCount > 0 {
+		existGateways, err := s.GetAssetGatewaysByDomainName(domain.Name)
+		if err != nil {
+			logger.Fatal("failed to get asset gateways")
+		}
 		// 这里全部移除一遍，防止秘钥更新了不同步
-		for _, gateway := range domain.Gateways {
-			err = s.DeleteAssetDomain(gateway.ID)
+		for _, gateway := range existGateways {
+			err = s.DeleteAssetGateway(gateway.ID)
 			if err != nil {
 				logger.Warnf("delete gateway failed, gateway:%v, cluster_id:%v\n", gateway, s.clusterId)
 				continue
