@@ -1,0 +1,99 @@
+################################################################################
+#       环境：ci/cd pipeline
+#       说明：跳过pipeline `git commit –m “first commit [CI SKIP]”`
+################################################################################
+kind: pipeline
+type: docker
+name: pipeline
+clone:
+  skip_verify: true
+
+trigger:
+  event:
+    exclude:
+      - pull_request
+
+volumes:
+  - name: cache-go-pkg
+    host:
+      path: /tmp/drone/go/pkg
+  - name: cache-go-build
+    host:
+      path: /tmp/drone/go-build
+  - name: var-run
+    host:
+      path: /var/run/
+
+steps:
+  - name: compile
+    image: harbor.gemini.com/gemini-platform/gemini-golang:1.18
+    volumes:
+      - name: cache-go-pkg
+        path: /go/pkg
+      - name: cache-go-build
+        path: /root/.cache/go-build
+    commands:
+      - export VERSION=${DRONE_BRANCH:-$DRONE_TAG}
+      - echo $VERSION
+      - make docker VERSION=$VERSION
+
+  - name: build-cloud
+    image: plugins/docker:20
+    volumes:
+      - name: var-run
+        path: /var/run/
+    settings:
+      daemon_off: true
+      purge: false
+      repo: harbor.gemini.com/gemini-platform/web-api
+      config:
+        from_secret: HARBOR_AUTH_ADMIN_CONFIG
+      tag:
+        - ${DRONE_TAG:-latest}
+        - ${DRONE_COMMIT}.${DRONE_BUILD_NUMBER}-cloud
+        - ${DRONE_BRANCH:-dev}-cloud
+      dockerfile: Dockerfile.cloud
+    when:
+      ref:
+        exclude:
+          - refs/tags/r*
+          - refs/tags/v* #(临时测试)　
+
+  - name: build-local
+    image: harbor.gemini.com/gemini-platform/plugins-docker:20
+    volumes:
+      - name: var-run
+        path: /var/run/
+    settings:
+      daemon_off: true
+      purge: false
+      repo: harbor.gemini.com/gemini-platform/web-api
+      config:
+        from_secret: HARBOR_AUTH_ADMIN_CONFIG
+      tag:
+        - ${DRONE_TAG:-latest}
+        - ${DRONE_COMMIT}.${DRONE_BUILD_NUMBER}-local
+        - ${DRONE_BRANCH:-dev}-local
+      dockerfile: Dockerfile.local
+    when:
+      ref:
+        exclude:
+          - refs/tags/cloud_r*
+          - refs/tags/cloud_v* #(临时测试)
+
+  - name: deploy
+    image: harbor.gemini.com/gemini-platform/gemini-deploy:latest
+    pull: always
+    commands:
+      - cd /gemini-deploy/
+      - python3 deploy.py
+
+  - name: notify
+    image: harbor.gemini.com/gemini-platform/drone-wechat-notify:latest
+    settings:
+      key:
+        from_secret: wechat_robot_key
+    when:
+      status:
+        - success
+        - failure
